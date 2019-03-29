@@ -1,0 +1,12 @@
+
+##########AJAX SYNTAX SIDE############
+$.ajax({
+            
+            method: "POST",
+            url: "/Shared/UploadImage",
+        }).done(function (reponse) {
+            debugger;
+            console.log();
+        }).fail(function(XMLHttpReuest, textStatus, errorThrown) {
+            alert("Fail")
+        });
