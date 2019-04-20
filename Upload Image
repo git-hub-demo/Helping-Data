@@ -9,11 +9,12 @@ public JsonResult UploadImage()
             {
                 var file = Request.Files[0];
                 var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                
                 var path = Path.Combine(Server.MapPath("~/Content/images"), fileName);
 
                 file.SaveAs(path);
 
-                result.Data = new {success = true, ImageURL = path};
+                result.Data = new {success = true, ImageURL = string.Format("/Content/images/{0}", fileName)};
             }
             catch (Exception e)
             {
@@ -53,9 +54,12 @@ public JsonResult UploadImage()
             data: formData,
             contentType: false,
             processData: false
-        }).done(function (reponse) {
+        }).done(function (response) {
             debugger;
             console.log();
+            if(response.success){
+                $('#categoryImage').attr('src',response.ImageUrl)
+            }
         }).fail(function(XMLHttpReuest, textStatus, errorThrown) {
             alert("Fail")
         });
