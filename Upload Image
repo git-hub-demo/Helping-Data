@@ -24,6 +24,16 @@ public JsonResult UploadImage()
 
 
 ##########CS.HTML SIDE############
+
+##bellow line prompt the use to select imgae##
+<label>Image</label>
+    <input id="imageUpload" name="ImageUrl" type="file" />
+
+##Bellow line is use to is show image after selection##
+
+
+
+##########AJAX Call on CS.HTML SIDE############
 <script>
     $('#imageId').change(function () {
         var element = this;
