@@ -28,10 +28,11 @@ public JsonResult UploadImage()
 
 ##bellow line prompt the use to select imgae##
 <label>Image</label>
-    <input id="imageUpload" name="ImageUrl" type="file" />
+        <input id="ImageUrl" name="ImageUrl" type="hidden"/>
+        <input id="imageUpload" name="Image" type="file" accept=".png, .jpg"/>
 
 ##Bellow line is use to is show image after selection##
-
+<img id="productImage" style="width: 280px; height: 300px" hidden="hidden" />
 
 
 ##########AJAX Call on CS.HTML SIDE############
