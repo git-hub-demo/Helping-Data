@@ -1,0 +1,9 @@
+public void UpdateProduct(ProductModel productModel)
+        {
+            using (var context = new HMDContext())
+            {
+                context.Entry(productModel).State=System.Data
+                    .Entity.EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
