@@ -1,0 +1,8 @@
+############## AJAX SIDE ############### 
+$.each(result,function (index, value) {
+                            $('#course1Id').append("<option value='" +
+                                value.CourseId +
+                                "'>" +
+                                value.CourseName +
+                                "</option>");
+                                });
