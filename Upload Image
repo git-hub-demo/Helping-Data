@@ -59,7 +59,8 @@ public JsonResult UploadImage()
             debugger;
             console.log();
             if(response.success){
-                $('#categoryImage').attr('src',response.ImageUrl)
+                $("#ImageUrl").val(response.ImageURL)
+                $('#productImage').attr('src', response.ImageURL);
             }
         }).fail(function(XMLHttpReuest, textStatus, errorThrown) {
             alert("Fail")
