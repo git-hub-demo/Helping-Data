@@ -1,0 +1,9 @@
+public void Delete(int id)
+        {
+            using (var context = new HMDContext())
+            {
+                var category = context.CategoryModels.Find(id);
+                context.CategoryModels.Remove(category);
+                context.SaveChanges();
+            }
+        }
