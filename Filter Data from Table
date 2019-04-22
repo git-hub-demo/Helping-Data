@@ -1,0 +1,13 @@
+ public ActionResult CategoryTable(string name)
+        {
+        #########below one line is for load data in database######## 
+            var category = categoryService.GetCategoryList();
+            
+            ######below few lines of code is use to filter data from data table#######
+            if (!string.IsNullOrEmpty(name))
+            {
+                category = category.Where(c => c.Name.ToLower()
+                    .Contains(name.ToLower())).ToList();
+            }
+            return PartialView(category);
+        }
