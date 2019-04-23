@@ -1,0 +1,6 @@
+###Call bellow function where you want to use it####
+function ActionFocus() {
+        $("html, body").animate({
+            scrollTop: $("#actionContainer").offset().top - 100
+        },1000);
+    }
