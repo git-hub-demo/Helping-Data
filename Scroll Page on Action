@@ -1,6 +1,6 @@
 ###Call bellow function where you want to use it####
-function ActionFocus() {
+function ActionFocus(pass_id) {
         $("html, body").animate({
-            scrollTop: $("#actionContainer").offset().top - 100
+            scrollTop: $(pass_id).offset().top - 100
         },1000);
     }
