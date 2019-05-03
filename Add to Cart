@@ -1,0 +1,38 @@
+######### CSHTML SIDE #############
+
+//we create a array to store list of buy itme if we do not use 
+    //array then new buy item will override with previouse on item
+    var product = [];
+    $(".cartId").click(function () {
+        var id = $(this).attr("cartId");
+        product.push(id);
+        //join("-") is use to join list in string form separated by - 
+        $.cookie("CartProduct", product.join("-"), { path: "/" });
+        alert("Product has added to cart");
+    });
+    
+    
+    
+    ########## SERVER SIDE #########
+    public ActionResult CheckOut()
+        {
+            var cartProductsCookie = Request.Cookies["CartProduct"];
+            CheckOutViewModels viewModel = new CheckOutViewModels();
+
+            if (cartProductsCookie != null)
+            {
+                ////delow line is use to get products ids
+                //var productIds = cartProductsCookie.Value;
+                ////delow line is use to split ids by - 
+                //var Ids = productIds.Split('-');
+                ////below line will convert string list in interger values
+                //List<int> pIds = Ids.Select(x => int.Parse(x)).ToList();
+
+                //bellow line of code is short form of above three lines of code
+                viewModel.CartProductIds = cartProductsCookie.Value.Split('-')
+                    .Select(x => int.Parse(x)).ToList();
+
+                viewModel.CartProducts = ProductsService.Instance.GetProducts(viewModel.CartProductIds);
+            }
+            return View(viewModel);
+        }
