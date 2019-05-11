@@ -1,0 +1,37 @@
+########### AJAX SIDE#########
+
+<script>
+    var callTimeout;
+    var priceSlider = $("#slide-range").slider({
+        range: true,
+        min: 0,
+        max: @Model.MaximumPrice,
+        values: [0, @Model.MaximumPrice],
+        slide: function (event, ui) {
+            var minPrice = ui.values[0];
+            var maxPrice = ui.values[1];
+
+            $("#amount").val("$" + minPrice + ".00" + "-" + "$" + maxPrice + ".00")
+
+            clearTimeout(callTimeout);
+            callTimeout = setTimeout(GetData,500);
+            
+        }
+    });
+
+    function GetData() {
+        console.log("Get Data Called");
+        $.ajax({
+            url: '@Url.Action("FilterProduct", "Shop")',
+            data: {
+                minimunPrice: priceSlider.slider("values",0),
+                maximunPrice: priceSlider.slider("values",1)
+            }
+        }).done(function (responce) {
+            $("#productDiv").html(responce);
+        }).fail(function (XMLHttpResponce, textStatus, errorThrown) {
+            alert("Fail");
+        });
+        
+    }
+</script>
