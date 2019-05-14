@@ -1,0 +1,114 @@
+###########HTML#############
+<div>
+        @if (Model.Pager != null)
+        {
+            if (Model.Pager.CurrentPage > 1)
+            {
+                <button class="pageButtons" data-pageNo="1">First</button>
+                <button class="pageButtons" data-pageNo="@(Model.Pager.CurrentPage - 1)">Previous</button>
+            }
+
+            for (int page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                var activeClass = Model.Pager.CurrentPage == page ? "active bg-info" : string.Empty;
+                <button class="@activeClass pageButtons" data-pageNo="@page">@page</button>
+            }
+
+            if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <button class="pageButtons" data-pageNo="@(Model.Pager.CurrentPage + 1)">Next</button>
+                <button class="pageButtons" data-pageNo="@(Model.Pager.EndPage)">Last</button>
+            }
+        }
+
+    </div>
+    
+    
+    #############AJAX##########
+    $('.pageButtons').click(function () {
+        var pageId = $(this).attr("data-pageNo");
+        $.ajax({
+                url:'@Url.Action("CategoryTable","Category")',//"/Product/ProductTable",
+                data: {
+                    pageNo: pageId
+                }
+
+            })
+            .done(function (responce) {
+                $('#tableContainer').html(responce);
+            })
+            .fail(function (XMLHttpResponce, textStatus, errorThrown) {
+                alert("Fail")
+            });
+    });
+    
+    ############SERVER SIDE###########
+    public ActionResult CategoryTable(string search, int? pageNo)
+        {
+            pageNo = pageNo.HasValue ? pageNo.Value > 0 ? pageNo.Value : 1 : 1;
+
+            var totalRecords = CategoriesService.Instance.CategoriesCount(search);
+
+            NewCategoryViewModel model = new NewCategoryViewModel
+            {
+                Categories = CategoriesService.Instance.GetCategories(search, pageNo.Value)
+            };
+
+            if(model.Categories != null) { 
+                
+                model.Pager = new Pager(totalRecords, pageNo,3);
+                
+                return PartialView(model);
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        
+        
+        ##########SERVICE SIDE##########
+        public int CategoriesCount(string search)
+        {
+            using (var context = new CBContext())
+            {
+                if (!string.IsNullOrEmpty(search))
+                {
+                    return context.Categories.Where(c => c.Name != null &&
+                        c.Name.ToLower().Contains(search.ToLower())).Count();
+                }
+                else
+                {
+                    return context.Categories.Count();
+                }
+            }
+        }
+
+        public List<Category> GetCategories(string search, int pageNo)
+        {
+            var pageSize = 3;
+            using (var context = new CBContext())
+            {
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    return context.Categories.Where(c => c.Name!=null && c.Name.ToLower()
+                        .Contains(search.ToLower()))
+                        .OrderBy(x => x.Id)
+                        .Skip((pageNo - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+                }
+                else
+                {
+                    var data= context.Categories
+                        .OrderBy(x => x.Id)
+                        .Skip((pageNo - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+                    return data;
+                }
+            }
+        }
+        
+        
