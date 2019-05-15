@@ -1,8 +1,14 @@
 ############## AJAX SIDE ############### 
-$.each(result,function (index, value) {
+$.each(responce,function (index, value) {
                             $('#course1Id').append("<option value='" +
                                 value.CourseId +
                                 "'>" +
                                 value.CourseName +
                                 "</option>");
                                 });
+
+###########BOTH CODE ARE SAME YOU CAN USE ANYONE OF THEM##########
+
+ $.each(responce, function(i, item){
+                $('<option value="' + item.Id + '">' + item.Name + '</option>').appendTo('#catetegoryId');
+            });
