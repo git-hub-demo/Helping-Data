@@ -45,3 +45,142 @@ WHERE City='Berlin' OR City='München';
 Select Data using NOT Condition.
 SELECT * FROM Customers
 WHERE NOT Country='Germany';
+
+
+#########SQL ORDER BY Keyword########
+Select All Data Ordered by CountryName.
+SELECT * FROM Customers
+ORDER BY Country;
+
+Select All Data Ordered by CountryName DESC.
+SELECT * FROM Customers
+ORDER BY Country DESC;
+
+Select All Data Ordered by CountryName ASC and CustomerName DESC.
+SELECT * FROM Customers
+ORDER BY Country ASC, CustomerName DESC;
+
+
+##########SQL INSERT INTO Statement#########
+******NOTE*******
+It is possible to write the INSERT INTO statement in two ways.
+
+The first way specifies both the column names and the values to be inserted:
+
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+
+If you are adding values for all the columns of the table,
+you do not need to specify the column names in the SQL query.
+However, make sure the order of the values is in the same order 
+as the columns in the table. The INSERT INTO syntax would be as follows:
+
+INSERT INTO table_name
+VALUES (value1, value2, value3, ...);
+******NOTE*******
+
+
+Select data where Address IS NOT NULL.
+SELECT CustomerName, ContactName, Address
+FROM Customers
+WHERE Address IS NOT NULL;
+
+
+Select data where Address is null.
+SELECT CustomerName, ContactName, Address
+FROM Customers
+WHERE Address IS NULL;
+
+
+###########The SQL UPDATE Statement##########
+Update desired table with desired values.
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+
+
+#######The SQL DELETE Statement##########
+Delete Specific one.
+DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
+
+
+Delete All Records.
+DELETE FROM table_name;
+
+
+##########SQL TOP, LIMIT or ROWNUM Clause##########
+********Note*******
+Not all database systems support the SELECT TOP clause.
+MySQL supports the LIMIT clause to select a limited number of records,
+while Oracle uses ROWNUM.
+********Note*******
+
+SQL TOP, LIMIT and ROWNUM Examples.
+SELECT TOP 3 * FROM Customers;
+
+SELECT * FROM Customers
+LIMIT 3;
+
+SELECT * FROM Customers
+WHERE ROWNUM <= 3;
+
+SQL TOP PERCENT Example.
+SELECT TOP 50 PERCENT * FROM Customers;
+
+
+########The SQL MIN() and MAX() Functions#######
+SELECT MIN(column_name)
+FROM table_name
+WHERE condition;
+
+SELECT MAX(column_name)
+FROM table_name
+WHERE condition;
+
+
+###########The SQL COUNT(), AVG() and SUM() Functions###########
+SELECT COUNT(column_name)
+FROM table_name
+WHERE condition;
+
+SELECT AVG(column_name)
+FROM table_name
+WHERE condition;
+
+SELECT SUM(column_name)
+FROM table_name
+WHERE condition;
+
+
+#######SQL IN Operator#########
+SELECT * FROM Customers
+WHERE Country IN ('Germany', 'France', 'UK');
+
+SELECT * FROM Customers
+WHERE Country NOT IN ('Germany', 'France', 'UK');
+
+##########SQL BETWEEN Operator##########
+SELECT * FROM Products
+WHERE Price BETWEEN 10 AND 20
+AND NOT CategoryID IN (1,2,3);
+
+
+SELECT * FROM Products
+WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY ProductName;
+
+
+SELECT * FROM Orders
+WHERE OrderDate BETWEEN #01/07/1996# AND #31/07/1996#;
+"OR"
+SELECT * FROM Orders
+WHERE OrderDate BETWEEN '1996-07-01' AND '1996-07-31';
+
+
+#########SQL Aliases#############
+SELECT CustomerID AS ID, CustomerName AS Customer
+FROM Customers;
+
+
+
+
