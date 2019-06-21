@@ -1,0 +1,47 @@
+#########SQL SELECT Statement##########
+Select All.
+Select * From DataTableName
+
+Select Specific Columns(Fields) .
+Select Name, Address From DataTableName
+
+Select Distinect Specific Columns(Fields).
+Select DISTINCT Name From DataTableName
+
+Select Distinect Data and get Count.
+Select COUNT(DISTINCT Name) From DataTableName
+
+SELECT Count(*) AS DistinctCountries.
+FROM (SELECT DISTINCT Country FROM Customers);
+
+#######SQL WHERE Clause########
+
+Select Data on base of Specific Field(Column) given by user.
+SELECT * FROM Customers
+WHERE Country='Mexico';
+
+****CAMPERRISON OPERATOR ARE ALSO USE WITH WHERE CLOUSE***.
+
+Select Data using BETWEEN Condition.
+SELECT * FROM Products
+WHERE Price BETWEEN 50 AND 60;
+
+Select Data using LIKE Condition.
+SELECT * FROM Customers
+WHERE City LIKE 's%';  (here 's%' means select all cities starting with 's')
+
+Select Data using IN Condition.
+SELECT * FROM Customers
+WHERE City IN ('Paris','London');  (it will select all cities having name "Paris" and "London")
+
+Select Data using AND Condition.
+SELECT * FROM Customers
+WHERE Country='Germany' AND City='Berlin';
+
+Select Data using OR Condition.
+SELECT * FROM Customers
+WHERE City='Berlin' OR City='München';
+
+Select Data using NOT Condition.
+SELECT * FROM Customers
+WHERE NOT Country='Germany';
