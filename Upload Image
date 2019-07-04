@@ -27,43 +27,47 @@ public JsonResult UploadImage()
 ##########CS.HTML SIDE############
 
 ##bellow line prompt the use to select imgae##
+<div class="form-group">
+                <label>Image</label>
+                <input id="imageURL" name="ImageURL" type="hidden" />
+                <input id="imageUpload" name="Image" type="file" accept=".png, .jpg" class="form-control" />
+            </div>
 <label>Image</label>
-        <input id="ImageUrl" name="ImageUrl" type="hidden"/>
-        <input id="imageUpload" name="Image" type="file" accept=".png, .jpg"/>
 
 ##Bellow line is use to is show image after selection##
-<img id="productImage" style="width: 280px; height: 300px" hidden="hidden" />
+ <div class="col-sm-4">
+        <img id="categoryImage" class="img-thumbnail img-fluid" src="~/Content/images/system/empty-image.png" />
+    </div>
 
 
 ##########AJAX Call on CS.HTML SIDE############
 <script>
-    $('#imageId').change(function () {
+    $('#imageUpload').change(function() {
         var element = this;
         var formData = new FormData();
-        var totalFiles = element.files.length;
-
-        for (var i = 0; i < totalFiles; i++) {
+        var totalFile = element.files.length;
+        debugger;
+        for (var i = 0; i < totalFile; i++) {
             var file = element.files[i];
             formData.append("Photo",file);
         }
-        debugger;
+
         $.ajax({
-            
-            type: "POST",
-            url: "/Shared/UploadImage",
-            dataType: "json",
+            method: "POST",
+            url: '@Url.Action("UploadImage","Shared")',//"/Shared/UploadImage",
             data: formData,
             contentType: false,
             processData: false
         }).done(function (response) {
             debugger;
-            console.log();
-            if(response.success){
-                $("#ImageUrl").val(response.ImageURL)
-                $('#productImage').attr('src', response.ImageURL);
+            console.log(response);
+            if (response.Success) {
+                debugger;
+                $('#imageURL').val(response.ImageURL);
+                $('#categoryImage').attr('src', response.ImageURL);
             }
-        }).fail(function(XMLHttpReuest, textStatus, errorThrown) {
-            alert("Fail")
+        }).fail(function(MVLHttpRequest, textStatus, errorThrown) {
+            alert("Fail");
         });
     });
 </script>
