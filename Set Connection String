@@ -1,0 +1,10 @@
+########PUT BELOW LINES IN DB CLASS#########
+public UniDbContext() : base("Here will be a name related to project name")
+        {
+        }
+
+
+<connectionStrings>
+    <add name="Here will be a name related to project name" connectionString="Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Here will be database name;Integrated Security=True"
+         providerName="System.Data.SqlClient" />
+  </connectionStrings>
