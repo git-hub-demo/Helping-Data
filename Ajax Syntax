@@ -1,0 +1,12 @@
+$.ajax({
+            url: '@Url.Action("ProductTable","Product")',
+            data: {
+                search:data@*"@Model.SearchTerm"*@
+            }
+        }).done(function (responce) {
+            debugger;
+            $("#tableContainer").html(responce);
+            debugger;
+        }).fail(function (XMLHttpResponce, textStatus, errorThrown) {
+                alert("Fail");
+            });
