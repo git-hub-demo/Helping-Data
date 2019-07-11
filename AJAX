@@ -10,3 +10,17 @@ $.ajax({
         }).fail(function(XMLHttpReuest, textStatus, errorThrown) {
             alert("Fail")
         });
+
+
+$.ajax({
+            url: '@Url.Action("ProductTable","Product")',
+            data: {
+                search:data
+            }
+        }).done(function (responce) {
+            debugger;
+            $("#tableContainer").html(responce);
+            debugger;
+        }).fail(function (XMLHttpResponce, textStatus, errorThrown) {
+                alert("Fail");
+            });
