@@ -1,0 +1,15 @@
+[Required]
+        [DisplayName("Do you or your spouse have any house within Bahawalpur City")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Please check this box.")]
+        public bool HaveHome { get; set; }
+        
+        
+        
+        
+        <div class="checkbox">
+                    <label>
+                        @Html.CheckBoxFor(c => c.Places.HaveHome)
+                        @Html.LabelFor(c => c.Places.HaveHome)
+                        @Html.ValidationMessageFor(c => c.Places.HaveHome)
+                    </label>
+                </div>
