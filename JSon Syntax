@@ -1,0 +1,5 @@
+public JsonResult GetCategories()
+        {
+            var categories = ProductsService.Instance.GetCategories();
+            return Json(categories, JsonRequestBehavior.AllowGet);
+        }
