@@ -6,9 +6,10 @@ $.each(responce,function (index, value) {
                                 value.CourseName +
                                 "</option>");
                                 });
-
+$("#scaleId").prop('selectedIndex', -1);        //make no selected value 
 ###########BOTH CODE ARE SAME YOU CAN USE ANYONE OF THEM##########
 
  $.each(responce, function(i, item){
                 $('<option value="' + item.Id + '">' + item.Name + '</option>').appendTo('#catetegoryId');
             });
+            $("#scaleId").prop('selectedIndex', -1);        //make no selected value 
