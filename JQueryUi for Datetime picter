@@ -1,0 +1,12 @@
+########Add bellow lines of code in head seassion directly##########
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+    
+    
+    #########Use bellow line of code in script secssion######
+    $( "#DOBId" ).datepicker();
+    
+    #######Add different attributes in datepicker using bellow link########
+    https://jqueryui.com/datepicker/#show-week
