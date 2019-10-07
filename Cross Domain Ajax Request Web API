@@ -1,0 +1,51 @@
+Browser allow a web page to make ajax request only within same domian and 
+we cannot make ajax request to call web page from cross domain becouse of browser security. This is called same orign policy. 
+
+Calling ASP NET Web API service in a cross domain using jQuery ajax has two WAYS.
+
+###################1. Using JSONP(JSON with Padding). #####################
+In JSONP we wrapp a data in a function.To do this first we have to install a package using bellow command,
+                install-package WebApiContrib.Formatting.Jsonp
+                
+Secondly add bellow line of code in Register method on Web.config inside the App_Start Folder.
+                var jsonpFormatter = new JsonpMediaTypeFormatter(config.Formatters.JsonFormatter);
+                config.Formatters.Insert(0, jsonpFormatter);
+and set dataType in ajax call to DataType="Jsonp".
+
+
+
+##################2. Enabling CORS (Corss Origin Domain Sharing). ##############
+To enable CORE follewing steps are performed.
+First install package using bellowing line of code
+                Install-Package Microsoft.Asp.Net.WebApi.Cors
+                
+
+Secondly add bellow line of code in Register method on Web.config inside the App_Start Folder.
+                EnableCorsAttribute cors = new EnableCorsAttribute(ORIGINS, headers, methods);
+                config.EnableCors(cors);
+In in ORIGINS we can pass URLs to enable which URLs can access it. For limited URLs pass URls in as
+EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:62526/api/Employeees","http://localhost:49714/HtmlPage1.html"
+                                                  ,headers, methods);
+                config.EnableCors(cors);
+all URLs separated by ','.
+
+
+In in METHODS we can pass specific method name like GET, POST, PUT or DELETE separated by comma ','. 
+For limited METHODS pass method name in as
+EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:62526/api/Employeees","http://localhost:49714/HtmlPage1.html"
+                                                  ,"*", "GET, POST, PUT, DELETE");
+                config.EnableCors(cors);
+
+
+If you want to all URLs, Headers and Methods then use this
+                EnableCorsAttribute cors = new EnableCorsAttribute("*","*","*");
+                config.EnableCors(cors);
+
+ABOVE LINES OF CODE ARE ENABLED CORS GLOBALLY.
+TO ENABLE CORE FOR SPECIFIC CONTROLLER OR ACTION OF A CONTROLLER THEN REGISTER METHOD IN WEB.CONFIG INSIDE APP_START FOLDER ADD
+                 config.EnableCors();
+                 
+AND USE ENABLE CORE ATTRIBUTE ON CONTROLLER AS 
+                [EnableCorsAttribute("*","*","*")]
+AND IF YOU DON'T WANT TO ENABLE CORS FOR A ACTION INSIDE THAT CONTROLLER AS APPLY BELLOW ATTRIBUTE ON THAT ACTION.
+                [DisableCors]
