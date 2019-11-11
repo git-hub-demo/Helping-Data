@@ -1,0 +1,31 @@
+ if (IsPostBack == false)
+        {
+            if (cmbItemType.Items.Count == 0)
+            {
+                cmbItemType.Items.Add("Raw");
+                cmbItemType.Items.Add("Parts");
+                cmbItemType.Items.Add("Finished");
+                cmbItemType.Items.Insert(0, "All");
+                cmbItemType.SelectedIndex = 0;
+            }
+            if (_SessionData.UserSpecialRights.ItemType == "All")
+            {
+                cmbItemType.Enabled = true;
+                cmbItemType.Text = _SessionData.UserSpecialRights.ItemType;
+            }
+            else
+            {
+                cmbItemType.Enabled = false;
+                cmbItemType.Text = _SessionData.UserSpecialRights.ItemType;
+            }
+
+            if (cmbIsActive.Items.Count == 0)
+            {
+                cmbIsActive.Items.Add(new ListItem("Active", "true"));
+                cmbIsActive.Items.Add(new ListItem("InActive", "false"));
+            }
+
+            FillGrid();
+            GetCategoryCode();
+
+        }
