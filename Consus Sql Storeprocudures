@@ -1,0 +1,212 @@
+use POS
+
+create table tbl_Demo_ItemCategory(
+	ItemCatID		int primary key identity,
+	ItemCatCode		varchar(3)	not null, 
+	ItemCatName		varchar(50)	not null,
+	IsActive		bit	not null
+)
+
+select * from tbl_Demo_ItemCategory
+
+alter proc usp_Demo_ItemCategory_InsertUpdate(
+	@ItemCatID		int,
+	@ItemCatCode	varchar(3),
+	@ItemCatName	varchar(50)='',
+	@IsActive		bit
+)
+as
+begin 
+	if(@ItemCatID=0)
+		begin
+			SET NOCOUNT ON;
+			insert into tbl_Demo_ItemCategory 
+			values (@ItemCatCode, @ItemCatName, @IsActive);
+			select SCOPE_IDENTITY();
+		end
+	else
+		begin
+			SET NOCOUNT ON;
+			update tbl_Demo_ItemCategory 
+			set ItemCatCode=@ItemCatCode,	 
+			ItemCatName=@ItemCatName,	 
+			IsActive=@IsActive
+			where ItemCatID=@ItemCatID		 
+			select @ItemCatID;
+		end
+end
+
+
+
+alter proc usp_Demo_ItemCategory_GetMax
+as
+begin
+	SELECT MAX(ISNULL(ItemCatCode,'0'))
+    FROM tbl_Demo_ItemCategory(NOLOCK);
+end
+
+
+alter proc usp_Demo_ItemCategory_GetAll(
+	@ItemCatName varchar(50)=''
+)
+as
+begin
+	if(@ItemCatName='')
+		begin
+			select * from tbl_Demo_ItemCategory;
+		end
+		
+	else
+		begin
+			select * from tbl_Demo_ItemCategory where ItemCatName like @ItemCatName+'%' OR ItemCatCode like @ItemCatName+'%';
+		end
+end
+
+create proc usp_Demo_ItemCategory_ByItemCatID
+( 
+	@ItemCatID int
+)
+as 
+begin
+	select * from tbl_Demo_ItemCategory where ItemCatID=@ItemCatID;
+end
+
+create proc usp_Demo_ItemCategory_Delete_ByID
+(
+	@ItemCatID int
+)
+as
+begin
+	SET NOCOUNT ON;
+	delete from tbl_Demo_ItemCategory where ItemCatID=@ItemCatID;
+end
+
+create table tbl_Demo_ItemSubCategory(
+	ItemSubCatID		int primary key identity,
+	ItemCatID		int not null,
+	ItemSubCatCode		varchar(6)	not null, 
+	ItemSubCatName		varchar(50)	not null,
+	IsActive		bit	not null
+)
+
+create proc usp_Demo_ItemSubCategory_InsertUpdate(
+	@ItemSubCatID		int,
+	@ItemCatID		int,
+	@ItemSubCatCode	varchar(6),
+	@ItemSubCatName	varchar(50)='',
+	@IsActive		bit
+)
+as
+begin 
+	if(@ItemSubCatID=0)
+		begin
+			SET NOCOUNT ON;
+			insert into tbl_Demo_ItemSubCategory 
+			values (@ItemCatID, @ItemSubCatCode, @ItemSubCatName, @IsActive);
+			select SCOPE_IDENTITY();
+		end
+	else
+		begin
+			SET NOCOUNT ON;
+			update tbl_Demo_ItemSubCategory 
+			set ItemCatID=@ItemCatID,	
+			ItemSubCatCode=@ItemSubCatCode,	 
+			ItemSubCatName=@ItemSubCatName,	 
+			IsActive=@IsActive
+			where ItemSubCatID=@ItemSubCatID		 
+			select @ItemSubCatID;
+		end
+end
+
+
+alter proc usp_Demo_ItemSubCategory_GetAll(
+	@ItemSubCatName varchar(50)=''
+)
+as
+begin
+	if(@ItemSubCatName='')
+		begin
+			select * from tbl_Demo_ItemSubCategory;		
+		end
+		
+	else
+		begin
+			select * from tbl_Demo_ItemSubCategory where ItemSubCatName like @ItemSubCatName+'%' OR ItemSubCatCode like @ItemSubCatName+'%';
+		end
+end
+
+create proc usp_Demo_ItemSubCategory_ByItemSubCatID
+( 
+	@ItemSubCatID int
+)
+as 
+begin
+	select * from tbl_Demo_ItemSubCategory where ItemSubCatID=@ItemSubCatID;
+end
+
+
+create proc usp_Demo_ItemSubCategory_Delete_ByID
+(
+	@ItemSubCatID int
+)
+as
+begin
+	SET NOCOUNT ON;
+	delete from tbl_Demo_ItemSubCategory where ItemSubCatID=@ItemSubCatID;
+end
+
+
+create proc usp_Demo_ItemSubCategory_GetItemCategory
+
+as
+begin
+	SET NOCOUNT ON;
+	select * from tbl_Demo_ItemCategory;
+end
+
+
+alter proc usp_Demo_ItemSubCategory_GetMaxItemCatCode
+	@ItemCatID Int
+
+AS
+	BEGIN
+		SET NOCOUNT ON;
+		DECLARE @SubCatCode Int;
+		(Select @SubCatCode=MAX(CAST(SUBSTRING(tbl_Demo_ItemSubCategory.ItemSubCatCode,5,6)AS INT)) from tbl_Demo_ItemSubCategory
+		Where ItemCatID=@ItemCatID)
+
+		Select ((SELECT ItemCatCode FROM tbl_Demo_ItemCategory WHERE ItemCatID =@ItemCatID) + '-' + CAST(MAX(@SubCatCode) AS Varchar)) AS ItemSubCatCode,
+		(SELECT ItemCatCode FROM tbl_Demo_ItemCategory WHERE ItemCatID =@ItemCatID) ItemCatCode
+		From tbl_Demo_ItemSubCategory
+		Where ItemCatID=@ItemCatID
+END
+
+
+select * from tbl_Demo_ItemSubCategory
+
+
+alter view v_Demo_ItemSubCategory_GetAll
+
+
+as
+	select		SubCat.ItemSubCatID, SubCat.ItemSubCatCode, SubCat.ItemSubCatName, SubCat.IsActive, 
+				Cat.ItemCatName +' ('+Cat.ItemCatCode+')'  AS ItemCategory 
+	from		tbl_Demo_ItemCategory  as Cat
+	Right join  tbl_Demo_ItemSubCategory  as SubCat
+	On			SubCat.ItemCatID=Cat.ItemCatID;
+
+create proc usp_Demo_ItemSubCategory_Search(
+	@ItemSubCatName varchar(50)=''
+)
+as
+begin
+	if(@ItemSubCatName='')
+		begin
+			select * from v_Demo_ItemSubCategory_GetAll;	
+		end
+		
+	else
+		begin
+			select * from v_Demo_ItemSubCategory_GetAll where ItemSubCatName like @ItemSubCatName+'%' OR ItemSubCatCode like @ItemSubCatName+'%';
+		end
+end
