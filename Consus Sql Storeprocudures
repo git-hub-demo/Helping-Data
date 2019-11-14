@@ -7,7 +7,11 @@ create table tbl_Demo_ItemCategory(
 	IsActive		bit	not null
 )
 
+
+
 select * from tbl_Demo_ItemCategory
+
+
 
 alter proc usp_Demo_ItemCategory_InsertUpdate(
 	@ItemCatID		int,
@@ -38,12 +42,14 @@ end
 
 
 
+
 alter proc usp_Demo_ItemCategory_GetMax
 as
 begin
 	SELECT MAX(ISNULL(ItemCatCode,'0'))
     FROM tbl_Demo_ItemCategory(NOLOCK);
 end
+
 
 
 alter proc usp_Demo_ItemCategory_GetAll(
@@ -62,6 +68,9 @@ begin
 		end
 end
 
+
+
+
 create proc usp_Demo_ItemCategory_ByItemCatID
 ( 
 	@ItemCatID int
@@ -70,6 +79,9 @@ as
 begin
 	select * from tbl_Demo_ItemCategory where ItemCatID=@ItemCatID;
 end
+
+
+
 
 create proc usp_Demo_ItemCategory_Delete_ByID
 (
@@ -81,6 +93,8 @@ begin
 	delete from tbl_Demo_ItemCategory where ItemCatID=@ItemCatID;
 end
 
+
+
 create table tbl_Demo_ItemSubCategory(
 	ItemSubCatID		int primary key identity,
 	ItemCatID		int not null,
@@ -88,6 +102,8 @@ create table tbl_Demo_ItemSubCategory(
 	ItemSubCatName		varchar(50)	not null,
 	IsActive		bit	not null
 )
+
+
 
 create proc usp_Demo_ItemSubCategory_InsertUpdate(
 	@ItemSubCatID		int,
@@ -119,6 +135,7 @@ begin
 end
 
 
+
 alter proc usp_Demo_ItemSubCategory_GetAll(
 	@ItemSubCatName varchar(50)=''
 )
@@ -135,6 +152,8 @@ begin
 		end
 end
 
+
+
 create proc usp_Demo_ItemSubCategory_ByItemSubCatID
 ( 
 	@ItemSubCatID int
@@ -143,6 +162,7 @@ as
 begin
 	select * from tbl_Demo_ItemSubCategory where ItemSubCatID=@ItemSubCatID;
 end
+
 
 
 create proc usp_Demo_ItemSubCategory_Delete_ByID
@@ -156,6 +176,7 @@ begin
 end
 
 
+
 create proc usp_Demo_ItemSubCategory_GetItemCategory
 
 as
@@ -163,6 +184,7 @@ begin
 	SET NOCOUNT ON;
 	select * from tbl_Demo_ItemCategory;
 end
+
 
 
 alter proc usp_Demo_ItemSubCategory_GetMaxItemCatCode
@@ -182,7 +204,10 @@ AS
 END
 
 
+
+
 select * from tbl_Demo_ItemSubCategory
+
 
 
 alter view v_Demo_ItemSubCategory_GetAll
@@ -194,6 +219,8 @@ as
 	from		tbl_Demo_ItemCategory  as Cat
 	Right join  tbl_Demo_ItemSubCategory  as SubCat
 	On			SubCat.ItemCatID=Cat.ItemCatID;
+
+
 
 create proc usp_Demo_ItemSubCategory_Search(
 	@ItemSubCatName varchar(50)=''
