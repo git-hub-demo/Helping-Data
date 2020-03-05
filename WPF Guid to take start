@@ -1,0 +1,376 @@
+To use MVVM architecture in WPF follow below steps.
+############1.  Create Model Classes:##########
+  public class StudentModel : BaseModel     //This Base class in at the end of this file......
+    {
+        private int studentId;
+        public int StudentId
+        {
+            get { return studentId; }
+            set { studentId = value; OnPropertyChanged("StudentId"); }
+        }
+
+        private string studentName;
+        public string StudentName
+        {
+            get { return studentName; }
+            set { studentName = value; OnPropertyChanged("StudentName"); }
+        }
+
+        private int genderId;
+        public int GenderId
+        {
+            get { return genderId; }
+            set { genderId = value; OnPropertyChanged("GenderId"); }
+        }
+
+        public virtual GenderModel GenderModel { get; set; }
+    }
+    
+    
+    
+    
+    
+    ########### 2. Create Service to inteact with database##############
+    public class StudentService
+    {
+        //WPFDemoDBEntities entities;
+        //public StudentService()
+        //{
+        //    entities = new WPFDemoDBEntities();
+        //}
+
+        public List<GenderModel> GetGender()
+        {
+            List<GenderModel> genderModel = new List<GenderModel>();
+            using (var context=new WPFDemoDBEntities())
+            {
+                var data= context.tbl_gender.ToList();
+                foreach(var gender in data)
+                {
+                    GenderModel model = new GenderModel
+                    {
+                        Id = gender.Id,
+                        Name = gender.Name
+                    };
+                    genderModel.Add(model);
+                }
+            }
+            return genderModel;
+        }
+
+        public List<StudentModel> GetStudent()
+        {
+            List<StudentModel> studentModel = new List<StudentModel>();
+            using(var context=new WPFDemoDBEntities())
+            {
+                var result = context.tbl_student.Include("tbl_gender").ToList();
+                if (result.Count > 0)
+                {
+                    foreach(var student in result)
+                    {
+                        StudentModel model = new StudentModel
+                        {
+                            StudentId = student.StudentId,
+                            StudentName = student.StudentName,
+                            GenderId = student.tbl_gender.Id
+                        };
+                        GenderModel gender = new GenderModel
+                        {
+                            Id = student.tbl_gender.Id,
+                            Name = student.tbl_gender.Name
+                        };
+                        model.GenderModel = gender;
+                        studentModel.Add(model);
+                    }
+                    return studentModel;
+                }
+                return null;
+            }
+        }
+
+        public bool SaveStudent(StudentModel studentModel)
+        {
+            try
+            {
+                if (studentModel != null)
+                {
+                    using (var context = new WPFDemoDBEntities())
+                    {
+                        tbl_student student = new tbl_student
+                        {
+                            StudentId = studentModel.StudentId,
+                            StudentName = studentModel.StudentName,
+                            GenderId = studentModel.GenderId
+                        };
+                        context.tbl_student.Add(student);
+                        context.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool UpdateStudent(StudentModel studentModel)
+        {
+            if (studentModel != null)
+            {
+                using (var context = new WPFDemoDBEntities())
+                {
+                    var result = context.tbl_student.FirstOrDefault(c=>c.StudentId==studentModel.StudentId);
+                    result.StudentId = studentModel.StudentId;
+                    result.StudentName = studentModel.StudentName;
+                    result.GenderId = studentModel.GenderId;
+                    context.Entry(result).State = System.Data.Entity.EntityState.Modified;
+                    context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteStudent(int id)
+        {
+            if (id > 0)
+            {
+                using(var context=new WPFDemoDBEntities())
+                {
+                    var result = context.tbl_student.FirstOrDefault(c => c.StudentId == id);
+                    context.tbl_student.Remove(result);
+                    context.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public StudentModel GetStudentById(int id)
+        {
+            if (id > 0)
+            {
+                using (var context = new WPFDemoDBEntities())
+                {
+                    var student = context.tbl_student.FirstOrDefault(c => c.StudentId == id);
+                    StudentModel studentModel = new StudentModel
+                    {
+                        StudentId = student.StudentId,
+                        StudentName = student.StudentName,
+                        GenderId =(int) student.GenderId,
+                    };
+                    return studentModel;
+                }
+            }
+            return null;
+        }
+    }
+    
+    
+    ########## 3. Create View ############
+    <UserControl x:Class="WPFDemoApp.View.StudentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPFDemoApp.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="400">
+
+    <Border Margin="10">
+        <StackPanel>
+            <StackPanel Grid.Column="0">
+                <TextBlock>Student Id</TextBlock>
+                <TextBox Name="txtStudentId" 
+                         Text="{Binding Path=StudentModel.StudentId, Mode=TwoWay}"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1">
+                <TextBlock>Student Name</TextBlock>
+                <TextBox Name="txtStudentName" 
+                         Text="{Binding Path=StudentModel.StudentName, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock>Gender</TextBlock>
+                <ComboBox Name="cmbGender"
+                          Text="{Binding Path=GenderModel.Id, Mode=TwoWay}" 
+                          SelectedValue="{Binding StudentModel.GenderId}"   //This line of code use to get selected value
+                          ItemsSource="{Binding Path=GenderList, Mode=TwoWay}" 
+                          SelectedValuePath="Id" 
+                          DisplayMemberPath="Name"/>
+            </StackPanel>
+
+            <Grid Margin="0 8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="0 0 5 0" Command="{Binding Path=SaveCommand}">Save</Button>
+                <Button Grid.Column="1" Margin="0 0 5 0">Update</Button>
+                <Button Grid.Column="2" Margin="0 0 5 0">Delete</Button>
+                <Button Grid.Column="3" >Search</Button>
+            </Grid>
+            <DataGrid 
+                Name="studentDataGrid"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Path=StudentList, Mode=TwoWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Header="Student Id"
+                        Width="auto"
+                        Binding="{Binding Path=StudentId}"/>
+                    <DataGridTextColumn 
+                        Header="Student Name"
+                        Width="auto"
+                        Binding="{Binding Path=StudentName}"/>
+                    <DataGridTextColumn 
+                        Header="Gender"
+                        Width="auto"
+                        Binding="{Binding Path=GenderModel.Name}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Border>
+</UserControl>
+
+
+###########4. Create ViewModel Class############
+
+ public class StudentViewModel:BaseModel
+    {
+        private string message;
+        public string Message
+        {
+            get { return message; }
+            set { message = value; }
+        }
+
+        StudentService objStudentService;
+        public StudentViewModel()
+        {
+            objStudentService = new StudentService();
+            LoadStudent();
+            LoadGender();
+
+            StudentModel = new StudentModel();
+            //GenderModel = new GenderModel();
+            //StudentModel.GenderModel = GenderModel;
+            saveCommand = new RelayCommand(SaveStudent);
+        }
+
+        #region Load all Student
+        private List<StudentModel> studentList;
+        public List<StudentModel> StudentList
+        {
+            get { return studentList; }
+            set { studentList = value; OnPropertyChanged("StudentList"); }
+        }
+        private void LoadStudent()
+        {
+            StudentList = objStudentService.GetStudent();
+        }
+        #endregion
+
+        #region Load Gender
+        private List<GenderModel> genderList;
+        public List<GenderModel> GenderList
+        {
+            get { return genderList; }
+            set { genderList = value; OnPropertyChanged("GenderList"); }
+        }
+        private void LoadGender()
+        {
+            GenderList = objStudentService.GetGender();
+        }
+        #endregion
+
+        #region Save Student
+        private StudentModel studentModel;
+        public StudentModel StudentModel
+        {
+            get { return studentModel; }
+            set { studentModel = value; OnPropertyChanged("StudentModel"); }
+        }
+
+        //private GenderModel genderModel;
+        //public GenderModel GenderModel
+        //{
+        //    get { return genderModel; }
+        //    set { genderModel = value; OnPropertyChanged("GenderModel"); }
+        //}
+
+        private RelayCommand saveCommand;
+        public RelayCommand SaveCommand
+        {
+            get { return saveCommand; }
+        }
+
+        public void SaveStudent()
+        {
+            try
+            {
+                //studentModel.GenderId = cmbGender.Value;
+                var responce = objStudentService.SaveStudent(studentModel);
+                if (responce)
+                {
+                    message = "Data Save Successfully.";
+                    LoadStudent();
+                }
+                else
+                {
+                    message = "Data not Save.";
+                }
+            }catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+        }
+
+        #endregion
+    }
+    
+    
+    ############## 5. Create Relay Command to handle button actions###########
+    public class RelayCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        private Action DoWork;
+        public RelayCommand(Action work)
+        {
+            DoWork = work;
+        }
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            DoWork();
+        }
+    }
+    
+    
+    
+    
+    
+    
+    ############ BASECLASSS #################
+    public abstract class BaseModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
