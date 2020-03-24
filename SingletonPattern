@@ -1,0 +1,33 @@
+#region Singleton
+
+        public static CategoriesService Instance
+        {
+            get
+            {
+                if (Instances == null) Instances = new CategoriesService();
+                return Instances;
+            }
+        }
+
+        private static CategoriesService Instances { get; set; }
+
+        private CategoriesService()
+        {
+        }
+
+#endregion
+
+
+#######How to use singleton##################
+public ActionResult CategoryTable(string search, int? pageNo)
+        {
+            NewCategoryViewModel model = new NewCategoryViewModel();
+
+            pageNo = pageNo.HasValue ? pageNo.Value > 0 ? pageNo.Value : 1 : 1;
+            model.SearchTerm = search;
+            var totalRecords = CategoriesService.Instance.CategoriesCount(search);  //only this line tell how toUse singleton            
+            model.Categories = CategoriesService.Instance.GetCategories(search, pageNo.Value);
+
+                model.Pager = new Pager(totalRecords, pageNo, 3);
+                return PartialView("CategoryTable", model);
+        }
