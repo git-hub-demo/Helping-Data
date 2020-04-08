@@ -1,0 +1,132 @@
+*******Method to get data from database*******
+private void Fill_Grid()
+        {
+            if (Convert.ToDecimal(look_Warehouse.EditValue) > 0)
+            {
+                DataSet ds = _INVTr_CRouteService.Get_Routes(Convert.ToDecimal(look_Warehouse.EditValue),
+                                       Session.Instance.UsersInfo.CompanyId);
+
+                if (ds.Tables.Count > 0)
+                {
+                    GridControl_Main.DataSource = ds.Tables[0];
+                }
+                Set_gControl_Main();
+            }
+
+        }
+
+*******Method to Generate Columns Propramatically and bind data*******
+        private void Set_gControl_Main()
+        {
+            GridView_Main.PopulateColumns();
+
+            int I = 0;
+            GridView_Main.Columns[I].Caption = "Route Description";//column heading
+            GridView_Main.Columns[I].Name = "colRoute_Des";	      // Name similar to name that we set in designer using property
+            GridView_Main.Columns[I].FieldName = "CR_D";   //this name should be similar to database column name
+            GridView_Main.Columns[I].Visible = true;
+
+            I++;
+            GridView_Main.Columns[I].Caption = "Day";
+            GridView_Main.Columns[I].Name = "colDay";
+            GridView_Main.Columns[I].FieldName = "RDay_D";
+            GridView_Main.Columns[I].Visible = true;
+
+            I++;
+            GridView_Main.Columns[I].Caption = "Date";
+            GridView_Main.Columns[I].Name = "colDate";
+            GridView_Main.Columns[I].FieldName = "CR_Date";
+            GridView_Main.Columns[I].Visible = true;
+
+            I++;
+            GridView_Main.Columns[I].Caption = "Total Routes";
+            GridView_Main.Columns[I].Name = "colTotal_Routes";
+            GridView_Main.Columns[I].FieldName = "TotalRoutes";
+            GridView_Main.Columns[I].Width = 100;
+            GridView_Main.Columns[I].Visible = true;
+
+            I++;
+            GridView_Main.Columns[I].Caption = "Assigned to";
+            GridView_Main.Columns[I].Name = "colAssigned_To";
+            GridView_Main.Columns[I].FieldName = "E_Name";
+            GridView_Main.Columns[I].Visible = true;
+
+            I++;
+            GridView_Main.Columns[I].Caption = "Last Modified";
+            GridView_Main.Columns[I].Name = "colLast_Modified";
+            GridView_Main.Columns[I].FieldName = "UpdatedDate";
+            GridView_Main.Columns[I].Visible = true;
+
+
+
+            GridView_Main.OptionsBehavior.Editable = false;
+            GridView_Main.OptionsBehavior.AllowAddRows = DefaultBoolean.False;
+            GridView_Main.OptionsBehavior.AllowDeleteRows = DefaultBoolean.False;
+
+            int nVisibleIndx = 0;				// to make column visible when index is greater then ZERO
+            foreach (GridColumn clmn in GridView_Main.Columns)
+            {
+                if (clmn.Visible == true)
+                {
+                    clmn.VisibleIndex = nVisibleIndx++;
+                }
+            }
+        }
+
+
+
+
+******Load data into GridView********
+
+
+
+****** add arrow to minimize and mazimize the Panel. Put this line inside the load event********
+splitContainerControl2.CollapsePanel = SplitCollapsePanel.Panel2;
+
+
+*******Calculate Sum from grid and display in a field or label********
+private void Sum_Calculate()
+        {
+            double nTotal_Amt = 0;
+            double nTotal_Tax = 0;
+            for (int i = 0; i < gridView1.DataRowCount; i++)
+            {
+                if (gridView1.GetRowCellValue(i, "I_Value") != null && gridView1.GetRowCellValue(i, "I_Value").ToString() != "")  //"I_Value is a cell name on which you want to perform calculation"
+                    nTotal_Amt = nTotal_Amt + Convert.ToDouble(gridView1.GetRowCellValue(i, "I_Value"));
+                if (gridView1.GetRowCellValue(i, "I_Tax") != null && gridView1.GetRowCellValue(i, "I_Tax").ToString() != "")
+                    nTotal_Tax = nTotal_Tax + Convert.ToDouble(gridView1.GetRowCellValue(i, "I_Tax"));
+            }
+            lblTotal_OTP.Text = nTotal_Tax.ToString("#,##0.00");
+            lblTotal_Tax.Text = nTotal_Tax.ToString("#,##0.00");
+
+            lblTotal.Text = nTotal_Amt.ToString("#,##0.00");
+            lblTotal_Tax1.Text = nTotal_Tax.ToString("#,##0.00");
+
+//lblBalnce_Due and lblTotal_Amt1 are label name on which we want to display sum.
+            lblBalnce_Due.Text = (nTotal_Amt + nTotal_Tax - Convert.ToDouble(labelControl21.Text)).ToString("#,##0.00");
+            lblTotal_Amt1.Text = (nTotal_Amt + nTotal_Tax - Convert.ToDouble(labelControl21.Text)).ToString("#,##0.00");
+        }
+
+
+ 
+*******to add new row in grid_detial when user reached at last row in devexpress******
+ GridView view = gridView1;
+
+
+        private void gridView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            GridView view = gridView1;
+            if (view == null) return;
+
+            if (e.KeyCode == Keys.Down || e.KeyCode==Keys.Enter || e.KeyCode==Keys.Tab && view.IsLastRow)
+            {
+                if (view.GetRowCellValue(view.FocusedRowHandle, "Item_ID") 
+		    != null && view.GetRowCellValue(view.FocusedRowHandle, "Item_ID").ToString() != "0")
+                {
+                    view.CloseEditor();
+                    view.AddNewRow();
+                    view.FocusedColumn = view.Columns["Name"];
+                }
+                return;
+            }
+        }
